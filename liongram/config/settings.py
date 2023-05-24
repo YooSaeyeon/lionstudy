@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'posts',
+    'users',
+    'accounts',
     #'debug_toolbar',
 ]
 
@@ -138,3 +140,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     "127.0.0.1",
 #     # ...
 # ]
+
+AUTH_USER_MODEL = 'users.User'

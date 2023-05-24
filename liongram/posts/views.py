@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.list import ListView
 from django.contrib.auth.decorators import login_required
 
+from .forms import PostBaseForm, PostCreateForm, PostDetailForm
 import posts
 from .models import Post
 
@@ -26,7 +27,10 @@ def post_detail_view(request, id):
         post = Post.objects.get(id=id)
     except Post.DoesNotExist:
         return redirect('index') 
-    context = { 'post': post }
+    context = { 
+        'post': post,
+        'form': PostDetailForm(),
+    }
     return render(request, 'posts/post_detail.html', context)
 
 @login_required
@@ -45,6 +49,24 @@ def post_create_view(request):
         )
         return redirect('index')
     
+def post_create_form_view(request):
+    if request.method == 'GET':
+        form = PostCreateForm()
+        context = {'form': form}
+        return render(request, 'posts/post_form2.html', context)
+    else:
+        form = PostCreateForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            Post.objects.create(
+                image=form.cleaned_data['image'],
+                content=form.cleaned_data['content'],
+                writer=request.user
+            )
+        else:
+            return redirect('posts:post-create')
+        return redirect('index')
+
 
 def post_update_view(request, id): # 수정할 때 기존 이미지 삭제하고 새로 생성하기
     #post = Post.objects.get(id=id)
